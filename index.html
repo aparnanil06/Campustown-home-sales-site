@@ -3,98 +3,175 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Median home sale price by college town</title>
+  <title>Median home sale price in 18 college towns</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
       color-scheme: light dark;
       --surface-1: #fcfcfb;
+      --card: #ffffff;
       --text-primary: #0b0b0b;
       --text-secondary: #52514e;
-      --rule: #d9d8d3;
+      --rule: #e3e2dd;
+      --grid: #eeeeea;
       --series-1: #2a78d6;
+      --range: #0b0b0b;
     }
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
         color-scheme: dark;
         --surface-1: #1a1a19;
+        --card: #232321;
         --text-primary: #f0efec;
         --text-secondary: #c3c2b7;
         --rule: #3a3a37;
+        --grid: #2e2e2b;
         --series-1: #3987e5;
+        --range: #f0efec;
       }
     }
     :root[data-theme="dark"] {
       color-scheme: dark;
       --surface-1: #1a1a19;
+      --card: #232321;
       --text-primary: #f0efec;
       --text-secondary: #c3c2b7;
       --rule: #3a3a37;
+      --grid: #2e2e2b;
       --series-1: #3987e5;
+      --range: #f0efec;
     }
+
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       background: var(--surface-1);
       color: var(--text-primary);
-      font-family: system-ui, sans-serif;
-      line-height: 1.5;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
     }
     main {
-      max-width: 52rem;
+      max-width: 60rem;
       margin: 0 auto;
-      padding: 2.5rem 1rem 1rem;
+      padding: 3rem 1.25rem 2rem;
     }
-    h1 { font-size: 1.6rem; margin: 0 0 0.5rem; }
-    h2 { font-size: 1.2rem; margin: 2.25rem 0 0.5rem; }
-    p { margin: 0.5rem 0; }
+    header.hero { margin-bottom: 2rem; }
+    .eyebrow {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--series-1);
+    }
+    h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.15rem;
+      font-weight: 650;
+    }
+    p { margin: 0; }
+    .takeaway {
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .intro { color: var(--text-secondary); }
     .muted { color: var(--text-secondary); font-size: 0.9rem; }
-    .rule {
-      border-left: 3px solid var(--series-1);
-      padding: 0.25rem 0 0.25rem 0.75rem;
-      margin: 1rem 0;
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
+    .rule-card { border-left: 4px solid var(--series-1); }
+    .rule-card strong { font-weight: 650; }
+    .rule-card .muted { margin-top: 0.5rem; }
     #status { color: var(--text-secondary); }
-    .chart-wrap { width: 100%; overflow-x: auto; }
-    svg text { fill: var(--text-primary); font-size: 13px; }
-    svg .sub { fill: var(--text-secondary); }
+
+    #chart { width: 100%; overflow-x: auto; margin-top: 1rem; }
+    #chart svg { display: block; }
+    svg text { fill: var(--text-primary); font-size: 13px; font-variant-numeric: tabular-nums; }
+    svg .axis { fill: var(--text-secondary); font-size: 12px; }
     svg .bar { fill: var(--series-1); }
+    svg .gridline { stroke: var(--grid); stroke-width: 1; }
+    svg .range { stroke: var(--range); stroke-width: 2; stroke-linecap: round; }
+
+    .table-wrap { overflow-x: auto; margin-top: 0.75rem; }
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.95rem;
+      font-variant-numeric: tabular-nums;
     }
     th, td {
       text-align: left;
-      padding: 0.4rem 0.5rem;
+      padding: 0.6rem 0.6rem;
       border-bottom: 1px solid var(--rule);
+      white-space: nowrap;
     }
-    th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
-    footer {
-      margin-top: 3rem;
-      font-size: 0.875rem;
+    th {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
       color: var(--text-secondary);
+    }
+    th.num, td.num { text-align: right; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    footer code { font-size: 0.85em; }
+
+    @media (max-width: 520px) {
+      main { padding: 2rem 1rem 1.5rem; }
+      .card { padding: 1.1rem; }
+      th, td { padding: 0.5rem 0.4rem; font-size: 0.9rem; }
+      .pct { display: none; }
     }
   </style>
 </head>
 <body>
   <main>
-    <h1>Median home sale price in 18 college towns</h1>
-    <p>Each bar and row shows the median sale price of homes sold near a university campus, in the
-      College-town home sales dataset.</p>
+    <header class="hero">
+      <p class="eyebrow">College-town home sales, 2026</p>
+      <h1>Median home sale price in 18 college towns</h1>
+      <p class="takeaway" id="takeaway"></p>
+      <p class="intro">Homes sold near 11 US university campuses, compared city by city.</p>
+    </header>
 
-    <div class="rule">
-      <strong>Rule:</strong> sales under $1,000 are left out, as the data description sheet
-      recommends. Every median and count on this page uses the remaining sales.
-      <p id="excluded" class="muted"></p>
-    </div>
+    <section class="card rule-card">
+      <p><strong>Rule:</strong> sales under $1,000 are left out, as the data description sheet recommends. Every median and count on this page uses the remaining sales.</p>
+      <p class="muted" id="excluded"></p>
+    </section>
 
     <p id="status">Loading the data…</p>
 
-    <h2>Median sale price by city</h2>
-    <div class="chart-wrap" id="chart"></div>
+    <section class="card" id="chart-card" hidden>
+      <h2>Median sale price by city</h2>
+      <p class="muted">Each bar ends at the median. The line shows the middle half of sales, from the 25th to the 75th percentile.</p>
+      <div id="chart"></div>
+    </section>
 
-    <h2>Table</h2>
-    <div id="table"></div>
+    <section class="card" id="table-card" hidden>
+      <h2>Table</h2>
+      <p class="muted">Sorted from highest to lowest median.</p>
+      <div class="table-wrap" id="table"></div>
+    </section>
 
     <footer>
       <p>Data: College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte
@@ -134,14 +211,18 @@
       return rows;
     }
 
-    function median(sorted) {
-      const n = sorted.length;
-      const mid = Math.floor(n / 2);
-      return n % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    // Linear interpolation between sorted values (same as Excel's PERCENTILE.INC).
+    function percentile(sorted, p) {
+      const pos = (sorted.length - 1) * p;
+      const lo = Math.floor(pos), hi = Math.ceil(pos);
+      return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
     }
 
     const money = n => "$" + Math.round(n).toLocaleString("en-US");
-    const count = n => n.toLocaleString("en-US");
+    const count = n => Math.round(n).toLocaleString("en-US");
+    const axisLabel = v => v === 0 ? "$0"
+      : v >= 1000000 ? "$" + (v / 1000000).toLocaleString("en-US", { maximumFractionDigits: 1 }) + "M"
+      : "$" + (v / 1000).toLocaleString("en-US") + "k";
 
     function escapeHTML(s) {
       return String(s).replace(/[&<>"']/g, c => ({
@@ -149,35 +230,79 @@
       }[c]));
     }
 
-    function drawChart(cities) {
-      const rowH = 26, labelW = 160, valueW = 84;
+    let cities = [];
+
+    function drawChart() {
       const container = document.getElementById("chart");
-      const width = Math.max(320, container.clientWidth || 600);
-      const barMax = Math.max(100, width - labelW - valueW);
-      const height = cities.length * rowH + 8;
-      const maxMedian = Math.max(...cities.map(c => c.median));
-      let svg = `<svg role="img" aria-label="Bar chart of median sale price by city" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+      const width = Math.max(300, container.clientWidth || 640);
+      const narrow = width < 560;
+      // On narrow screens, city names sit above each bar so the bars get the full width.
+      const originX = narrow ? 0 : 170;
+      const rightPad = narrow ? 70 : 84;
+      const rowH = narrow ? 48 : 30;
+      const axisH = 28;
+      const plotW = width - originX - rightPad;
+      const maxP75 = Math.max(...cities.map(c => c.p75));
+      const axisMax = Math.ceil(maxP75 / 100000) * 100000;
+      const x = v => originX + (v / axisMax) * plotW;
+      const plotH = cities.length * rowH;
+      const height = plotH + axisH + 6;
+
+      let svg = `<svg role="img" aria-label="Bar chart of median sale price by city, with the 25th to 75th percentile range" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+
+      // Gridlines and axis labels every $100,000
+      // Smallest tick step whose labels have room on the axis
+      const steps = [100000, 200000, 400000, 500000, 1000000];
+      const tickStep = steps.find(s => (s / axisMax) * plotW >= (narrow ? 56 : 60)) || 1000000;
+      for (let v = 0; v <= axisMax; v += tickStep) {
+        svg += `<line class="gridline" x1="${x(v).toFixed(1)}" y1="0" x2="${x(v).toFixed(1)}" y2="${plotH}"/>`;
+        svg += `<text class="axis" x="${x(v).toFixed(1)}" y="${plotH + 20}" text-anchor="middle">${axisLabel(v)}</text>`;
+      }
+
       cities.forEach((c, i) => {
-        const y = i * rowH + 4;
-        const w = (c.median / maxMedian) * barMax;
+        const top = i * rowH;
         const label = `${c.city}, ${c.state}`;
-        svg += `<text x="${labelW - 8}" y="${y + 16}" text-anchor="end">${escapeHTML(label)}</text>`;
-        svg += `<rect class="bar" x="${labelW}" y="${y + 4}" width="${w.toFixed(1)}" height="16" rx="2">`
-             + `<title>${escapeHTML(label)}: median ${money(c.median)} from ${count(c.sales)} sales</title></rect>`;
-        svg += `<text x="${labelW + w + 6}" y="${y + 16}">${money(c.median)}</text>`;
+        const title = `${label}: median ${money(c.median)}; middle half of sales ${money(c.p25)} to ${money(c.p75)}; ${count(c.sales)} sales`;
+        // Bar row: centered in the row on wide screens, lower in the row on narrow screens
+        const barY = narrow ? top + 22 : top + (rowH - 12) / 2;
+        const mid = barY + 6;
+        svg += `<g><title>${escapeHTML(title)}</title>`;
+        if (narrow) {
+          svg += `<text x="0" y="${top + 14}" text-anchor="start">${escapeHTML(label)}</text>`;
+        } else {
+          svg += `<text x="${originX - 10}" y="${mid + 4.5}" text-anchor="end">${escapeHTML(label)}</text>`;
+        }
+        svg += `<rect class="bar" x="${originX}" y="${barY}" width="${(x(c.median) - originX).toFixed(1)}" height="12" rx="2"/>`;
+        svg += `<line class="range" x1="${x(c.p25).toFixed(1)}" y1="${mid}" x2="${x(c.p75).toFixed(1)}" y2="${mid}"/>`;
+        svg += `<line class="range" x1="${x(c.p25).toFixed(1)}" y1="${mid - 5}" x2="${x(c.p25).toFixed(1)}" y2="${mid + 5}"/>`;
+        svg += `<line class="range" x1="${x(c.p75).toFixed(1)}" y1="${mid - 5}" x2="${x(c.p75).toFixed(1)}" y2="${mid + 5}"/>`;
+        svg += `<text x="${(x(Math.max(c.p75, c.median)) + 8).toFixed(1)}" y="${mid + 4.5}">${money(c.median)}</text>`;
+        svg += `</g>`;
       });
       svg += `</svg>`;
       container.innerHTML = svg;
     }
 
-    function drawTable(cities) {
-      let html = `<table><thead><tr><th>City</th><th>State</th><th class="num">Sales counted</th><th class="num">Median sale price</th></tr></thead><tbody>`;
+    function drawTable() {
+      let html = `<table><thead><tr>`
+        + `<th>City</th><th>State</th><th class="num">Sales counted</th>`
+        + `<th class="num pct">25th percentile</th><th class="num">Median</th><th class="num pct">75th percentile</th>`
+        + `</tr></thead><tbody>`;
       cities.forEach(c => {
         html += `<tr><td>${escapeHTML(c.city)}</td><td>${escapeHTML(c.state)}</td>`
-              + `<td class="num">${count(c.sales)}</td><td class="num">${money(c.median)}</td></tr>`;
+              + `<td class="num">${count(c.sales)}</td>`
+              + `<td class="num pct">${money(c.p25)}</td>`
+              + `<td class="num">${money(c.median)}</td>`
+              + `<td class="num pct">${money(c.p75)}</td></tr>`;
       });
       html += `</tbody></table>`;
       document.getElementById("table").innerHTML = html;
+    }
+
+    function setTakeaway() {
+      const top = cities[0], low = cities[cities.length - 1];
+      document.getElementById("takeaway").textContent =
+        `Highest median: ${top.city}, ${top.state} (${money(top.median)}). Lowest median: ${low.city}, ${low.state} (${money(low.median)}).`;
     }
 
     async function main() {
@@ -203,19 +328,29 @@
           groups.get(key).prices.push(price);
         }
 
-        const cities = [...groups.values()].map(g => {
+        cities = [...groups.values()].map(g => {
           const sorted = g.prices.slice().sort((a, b) => a - b);
-          return { city: g.city, state: g.state, sales: sorted.length, median: median(sorted) };
+          return {
+            city: g.city,
+            state: g.state,
+            sales: sorted.length,
+            p25: percentile(sorted, 0.25),
+            median: percentile(sorted, 0.5),
+            p75: percentile(sorted, 0.75)
+          };
         }).sort((a, b) => b.median - a.median);
 
         document.getElementById("excluded").textContent =
           `Left out: ${count(excluded)} of ${count(total)} sales. Counted: ${count(total - excluded)} sales in ${cities.length} cities.`;
+        setTakeaway();
         status.remove();
-        drawChart(cities);
-        drawTable(cities);
+        document.getElementById("chart-card").hidden = false;
+        document.getElementById("table-card").hidden = false;
+        drawChart();
+        drawTable();
         let lastWidth = window.innerWidth;
         window.addEventListener("resize", () => {
-          if (window.innerWidth !== lastWidth) { lastWidth = window.innerWidth; drawChart(cities); }
+          if (window.innerWidth !== lastWidth) { lastWidth = window.innerWidth; drawChart(); }
         });
       } catch (err) {
         status.textContent = "The data could not be loaded (" + err.message + "). Check that data/college_town_home_sales.csv is in the site.";
